@@ -1,4 +1,4 @@
-version: '2'
+version: '2.2'
 
 volumes:
   build:
@@ -18,6 +18,8 @@ services:
       - db
     depends_on: 
       - agent  
+    mem_limit: 128m
+    cpus: 0.5
     environment:
       DJANGO_SETTINGS_MODULE: todobackend.settings.test
       MYSQL_HOST: db
@@ -32,6 +34,8 @@ services:
     volumes:
       - build:/build
     entrypoint: "entrypoint.sh"
+    mem_limit: 256m
+    cpus: 1
     command: ["pip", "wheel", "--no-index", "-f /build", "."]
 
   agent:
@@ -41,6 +45,8 @@ services:
     environment:
       PROBE_HOST: "db"
       PROBE_PORT: "3306"
+    mem_limit: 64m
+    cpus: 0.25
     command: ["probe.yml"]
 
   db: 
@@ -48,5 +54,7 @@ services:
     hostname: db
     expose:
       - "3306"
+    mem_limit: 256m
+    cpus: 0.5
     environment:
       MYSQL_ROOT_PASSWORD: password

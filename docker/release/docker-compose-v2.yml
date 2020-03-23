@@ -1,4 +1,4 @@
-version: '2'
+version: '2.2'
 
 volumes:
   webroot:
@@ -25,6 +25,8 @@ services:
       - "--module todobackend.wsgi"
       - "--master"
       - "--die-on-term"
+    mem_limit: 128m
+    cpus: 0.25  
 
   test:
     image: jmenga/todobackend-specs
@@ -35,6 +37,8 @@ services:
       JUNIT_REPORT_PATH: /reports/acceptance.xml
       JUNIT_REPORT_STACK: 1
     command: --reporter mocha-jenkins-reporter
+    mem_limit: 64m
+    cpus: 1
 
   nginx:
     build: 
@@ -46,6 +50,8 @@ services:
       - "8000:8000"
     volumes:
       - webroot:/var/www/todobackend
+    mem_limit: 64m
+    cpus: 0.25
 
   db:
     image: mysql:5.6
@@ -56,6 +62,8 @@ services:
       MYSQL_USER: todo
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: password
+    mem_limit: 512m
+    cpus: 0.5
 
   agent:
     image: simorgh1/ansible
@@ -65,3 +73,5 @@ services:
       PROBE_HOST: "db"
       PROBE_PORT: "3306"
     command: ["probe.yml"]
+    mem_limit: 64m
+    cpus: 0.25
